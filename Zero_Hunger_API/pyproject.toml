@@ -1,0 +1,22 @@
+[tool.poetry]
+name = "app"
+version = "0.1.0"
+description = ""
+authors = ["Gustitreshana <gustith2105@gmail.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.12"
+flask = "^3.0.3"
+poetry-dotenv-plugin = "^0.2.0"
+flask-jwt-extended = "^4.6.0"
+sqlalchemy = "^2.0.29"
+flask-sqlalchemy = "^3.1.1"
+pymysql = "^1.1.0"
+cryptography = "^42.0.5"
+flask-bcrypt = "^1.0.1"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
