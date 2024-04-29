@@ -37,4 +37,4 @@ def create_app():
 if __name__ == "__main__":
     app = create_app()
     port = int(os.environ.get("PORT", 11463))
-    app.run(host='0.0.0.0', port=port)
+    app.listen(host='0.0.0.0', port=port)
