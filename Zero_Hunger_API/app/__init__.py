@@ -6,31 +6,31 @@ from app.controllers.user_management_route import user_routes
 from app.controllers.contact_management_route import contact_routes
 import os
 
-# Memuat variabel lingkungan
+# Loading environment variables
 load_dotenv()
 
-# Menginisialisasi aplikasi Flask
+# Initializing Flask application
 def create_app():
     app = Flask(__name__)
 
-    # Mengatur URI database dari file .env
+    # Setting database URI from .env file
     app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DB_URI')
 
-    # Menginisialisasi database
+    # Initializing database
     init_db(app)
 
-    # Mengatur kunci rahasia JWT dari file .env
+    # Setting JWT secret key from .env file
     app.config['JWT_SECRET_KEY'] = os.getenv('JWT_SECRET_KEY')
     JWTManager(app)
     
-    # Mendaftarkan blueprint
+    # Registering blueprints
     app.register_blueprint(user_routes)
     app.register_blueprint(contact_routes)
 
-    # Mendefinisikan route di sini
+    # Defining routes here
     @app.route('/')
     def home():
-        return "Halo, Dunia!"
+        return "Hello, Zero Hunger API!"
 
     return app
 
