@@ -23,7 +23,7 @@ def add_contact():
         new_contact = Contact(name=data['name'], email=data['email'], messages=data.get('messages'))
         db.session.add(new_contact)
         db.session.commit()
-        return jsonify({'message': 'Contact successfully added'}), 201
+        return jsonify({'message': 'Contact successfully added'}), 200
     except SQLAlchemyError as e:
         db.session.rollback()
         return jsonify({'message': 'Failed to add contact', 'error': str(e)}), 500

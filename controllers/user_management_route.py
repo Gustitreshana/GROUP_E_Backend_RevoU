@@ -53,7 +53,7 @@ def create_user():
         db.session.add(new_user)
         db.session.commit()
 
-        return jsonify({'message': 'User successfully added'}), 201
+        return jsonify({'message': 'User successfully added'}), 200
     except Exception as e:
         db.session.rollback()
         return jsonify({'message': 'Failed to add user', 'error': str(e)}), 500
