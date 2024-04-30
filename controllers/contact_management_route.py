@@ -29,7 +29,7 @@ def add_contact():
         return jsonify({'message': 'Gagal menambahkan kontak', 'error': str(e)}), 500
 
 # Update a contact
-@contact_routes.route('/contacts/<int:contact_id>', methods=["PUT"])
+@contact_routes.route('/contacts/user/<int:contact_id>', methods=["PUT"])
 def update_contact(contact_id):
     data = request.get_json()
     try:
@@ -46,7 +46,7 @@ def update_contact(contact_id):
         return jsonify({'message': 'Gagal memperbarui kontak', 'error': str(e)}), 500
 
 # Delete a contact
-@contact_routes.route('/contacts/<int:contact_id>', methods=["DELETE"])
+@contact_routes.route('/contacts/user/<int:contact_id>', methods=["DELETE"])
 def delete_contact(contact_id):
     try:
         contact = Contact.query.filter_by(id=contact_id).first()
