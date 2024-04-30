@@ -58,7 +58,7 @@ def create_user():
         db.session.rollback()
         return jsonify({'message': 'Failed to add user', 'error': str(e)}), 500
     
-@user_routes.route('/register/<int:user_id>', methods=["PUT"])
+@user_routes.route('/admin/user/<int:user_id>', methods=["PUT"])
 def update_user(user_id):
     data = request.get_json()
     try:
@@ -77,7 +77,7 @@ def update_user(user_id):
         db.session.rollback()
         return jsonify({'message': 'Failed to update user', 'error': str(e)}), 500
 
-@user_routes.route('/register/<int:user_id>', methods=["DELETE"])
+@user_routes.route('/admin/user/<int:user_id>', methods=["DELETE"])
 def delete_user(user_id):
     try:
         user = User.query.filter_by(id=user_id).first()
