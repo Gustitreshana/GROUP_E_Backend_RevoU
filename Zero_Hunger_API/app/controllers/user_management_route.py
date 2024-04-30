@@ -58,7 +58,7 @@ def create_user():
         db.session.rollback()
         return jsonify({'message': 'Failed to add user', 'error': str(e)}), 500
     
-@user_routes.route('/register', methods=["PUT"])
+@user_routes.route('/register/<int:user_id>', methods=["PUT"])
 def update_user(user_id):
     data = request.get_json()
     try:
