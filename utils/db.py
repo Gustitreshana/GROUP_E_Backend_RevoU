@@ -7,7 +7,14 @@ import os
 # Creating a SQLAlchemy db object without direct initialization
 db = SQLAlchemy()
 
-DATABASE_URI = "mysql+pymysql://root:tMvaPMeZxjeNENRLoYltgzgqtAslgdDa@monorail.proxy.rlwy.net:11463/zero_hunger"
+DATABASE_TYPE = os.getenv("DATABASE_TYPE")
+DATABASE_USERNAME = os.getenv("DATABASE_USERNAME")
+DATABASE_PASSWORD = os.getenv("DATABASE_PASSWORD")
+DATABASE_HOST = os.getenv("DATABASE_HOST")
+DATABASE_PORT = os.getenv("DATABASE_PORT")
+DATABASE_NAME = os.getenv("DATABASE_NAME")
+DATABASE_URI = os.getenv('DATABASE_URI')
+
 engine = create_engine(DATABASE_URI)
 Session = scoped_session(sessionmaker(bind=engine))
 
