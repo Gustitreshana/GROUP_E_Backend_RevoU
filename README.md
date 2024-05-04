@@ -1,4 +1,4 @@
-# Zero Hunger API
+# Zero Hunger API 
 
 The Zero Hunger API is a backend application built using Flask to help manage users and contacts in support of the Zero Hunger campaign.
 
