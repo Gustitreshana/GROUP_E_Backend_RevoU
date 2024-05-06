@@ -3,7 +3,6 @@ from flask_jwt_extended import JWTManager
 from utils.db import init_db
 from controllers.user_management_route import user_routes
 from controllers.contact_management_route import contact_routes
-from controllers.profile_management_route import profile_routes
 from controllers.donation_management_route import donation_routes
 from dotenv import load_dotenv
 from flask_cors import CORS
@@ -29,7 +28,6 @@ jwt = JWTManager(app)
 # Registering blueprints
 app.register_blueprint(user_routes)
 app.register_blueprint(contact_routes)
-app.register_blueprint(profile_routes)
 app.register_blueprint(donation_routes)
 
 # Defining routes here
