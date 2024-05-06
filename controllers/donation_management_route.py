@@ -1,7 +1,6 @@
 from flask import Blueprint, request, jsonify
 from models.donation_model import Donation
 from models.user_model import User
-from models.profile_model import Profile
 from utils.db import db
 from flask_jwt_extended import jwt_required
 from sqlalchemy.exc import SQLAlchemyError
@@ -30,11 +29,11 @@ def create_donation():
 @donation_routes.route('/donations', methods=['GET'])
 @jwt_required()
 def get_donations():
-    donations = Donation.query.join(User).join(Profile).all()
+    donations = Donation.query.join(User).all()  # Hapus join dengan Profile
     donations_list = [{
         'id': donation.id,
         'nominal': format_rupiah(donation.nominal),
-        'donor_name': donation.donor.profile.realname,
+        'donor_name': donation.user.realname,  # Gunakan realname langsung dari User
         'created_at': donation.created_at
     } for donation in donations]
     return jsonify(donations_list)
