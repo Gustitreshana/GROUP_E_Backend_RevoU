@@ -11,6 +11,8 @@ class User(db.Model):
     created_at = db.Column(DateTime(timezone=True), server_default=func.now())
     updated_at = db.Column(DateTime(timezone=True), onupdate=func.now())
     
+    profile = db.relationship('Profile', backref='user', uselist=False, lazy=True)
+
     def to_dict(self):
         return {
             'id': self.id,
