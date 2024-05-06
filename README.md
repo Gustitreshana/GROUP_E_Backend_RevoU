@@ -44,6 +44,10 @@ python main.py
 
 ## Usage
 
+## API Documentation
+
+For more detailed information on API endpoints and their usage, please refer to our [API Documentation](https://documenter.getpostman.com/view/29213022/2sA3JDhQs8).
+
 ### Registering a New User
 
 ```bash
