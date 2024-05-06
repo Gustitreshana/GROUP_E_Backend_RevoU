@@ -1,11 +1,12 @@
 # Zero Hunger API
 
-The Zero Hunger API is a backend application built using Flask to help manage users and contacts in support of the Zero Hunger campaign.
+The Zero Hunger API is a backend application built using Flask to help manage users, contacts, and donations in support of the Zero Hunger campaign.
 
 ## Features
 
 - **User Management**: Register, log in, update, and delete users.
 - **Contact Management**: Add, update, and delete contacts.
+- **Donation Management**: Add, view, update, and delete donations.
 - **Authentication**: Uses JWT for user authentication.
 
 ## Technologies Used
@@ -22,23 +23,23 @@ Ensure you have Python and pip installed. You also need to have MySQL set up and
 ## Installation
 
 - Clone this repository.
-
+  
 ```bash
-   git https://github.com/Gustitreshana/GROUP_E_Backend_RevoU.git
+git clone https://github.com/Gustitreshana/GROUP_E_Backend_RevoU.git
 ```
 
 - Install dependencies using pip
 
 ```bash
-   pip install -r requirements.txtl
+pip install -r requirements.txt
 ```
 
-- Create a `.env` file at the root of the project and configure the environment variables (DB_URI, JWT_SECRET_KEY, etc.).
+- Create a `.env` file at the root of the project and configure the environment variables (DATABASE_URI, JWT_SECRET_KEY, etc.).
 
 - Run the application.
 
 ```bash
-   python main.py
+python app.py
 ```
 
 ## Usage
@@ -50,7 +51,10 @@ POST /register
 {
 "username": "newuser",
 "email": "newuser@example.com",
-"password": "strongpassword"
+"password": "strongpassword",
+"realname": "User Real Name",
+"address": "User Address",
+"occupation": "User Occupation"
 }
 ```
 
@@ -59,7 +63,7 @@ POST /register
 ```bash
 POST /login
 {
-"username": "newuser",
+"email": "newuser@example.com",
 "password": "strongpassword"
 }
 ```
@@ -70,7 +74,26 @@ POST /login
 POST /contacts
 {
 "name": "Contact Name",
-"email": "contactemail@example.com",
-"phone": "1234567890"
+"email": "contact@example.com",
+"phone": "1234567890",
+"user_id": 1
 }
 ```
+
+### Adding Donation
+
+```bash
+POST /donations
+{
+"nominal": 50000,
+"from_id": 1
+}
+```
+
+### Viewing All Donations
+
+```bash
+GET /donations
+```
+
+This update includes the addition of donation management and minor fixes to syntax and provided information. Ensure to update the `.env` and `requirements.txt` files according to the latest needs of your project.
