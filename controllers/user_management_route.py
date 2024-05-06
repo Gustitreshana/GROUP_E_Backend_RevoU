@@ -22,6 +22,9 @@ def register_page():
                 'id': user.id,
                 'name': user.username,
                 'email': user.email,
+                'realname': user.realname,
+                'address': user.address,
+                'occupation': user.occupation,
                 'created_at': user.created_at,
                 'updated_at': user.updated_at
             }
@@ -36,7 +39,6 @@ def register_page():
 # Registering a new user
 @user_routes.route('/register', methods=["POST"])
 def create_user():
-    # Retrieving data from the request
     data = request.get_json()
 
     try:
@@ -49,7 +51,14 @@ def create_user():
         hashed_password = bcrypt.generate_password_hash(data['password']).decode('utf-8')
 
         # Creating a new user
-        new_user = User(username=data['username'], email=data['email'], password_hash=hashed_password)
+        new_user = User(
+            username=data['username'],
+            email=data['email'],
+            password_hash=hashed_password,
+            realname=data.get('realname'),  # Menambahkan realname
+            address=data.get('address'),    # Menambahkan address
+            occupation=data.get('occupation')  # Menambahkan occupation
+        )
         db.session.add(new_user)
         db.session.commit()
 
@@ -67,6 +76,9 @@ def update_user(user_id):
             return jsonify({'message': 'User not found'}), 404
         user.username = data.get('username', user.username)
         user.email = data.get('email', user.email)
+        user.realname = data.get('realname', user.realname)  # Memperbarui realname
+        user.address = data.get('address', user.address)    # Memperbarui address
+        user.occupation = data.get('occupation', user.occupation)  # Memperbarui occupation
         # Update password if provided
         if 'password' in data:
             hashed_password = bcrypt.generate_password_hash(data['password']).decode('utf-8')
