@@ -29,11 +29,11 @@ def create_donation():
 @donation_routes.route('/donations', methods=['GET'])
 @jwt_required()
 def get_donations():
-    donations = Donation.query.join(User).all()  # Hapus join dengan Profile
+    donations = Donation.query.join(User).all()
     donations_list = [{
         'id': donation.id,
         'nominal': format_rupiah(donation.nominal),
-        'donor_name': donation.user.realname,  # Gunakan realname langsung dari User
+        'donor_name': donation.donor.realname,
         'created_at': donation.created_at
     } for donation in donations]
     return jsonify(donations_list)
