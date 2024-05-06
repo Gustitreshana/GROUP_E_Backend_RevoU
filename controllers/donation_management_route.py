@@ -29,14 +29,17 @@ def create_donation():
 @donation_routes.route('/donations', methods=['GET'])
 @jwt_required()
 def get_donations():
-    donations = Donation.query.join(User).all()
-    donations_list = [{
-        'id': donation.id,
-        'nominal': format_rupiah(donation.nominal),
-        'donor_name': donation.donor.realname,
-        'created_at': donation.created_at
-    } for donation in donations]
-    return jsonify(donations_list)
+    try:
+        donations = Donation.query.join(User).all()
+        donations_list = [{
+            'id': donation.id,
+            'nominal': format_rupiah(donation.nominal),
+            'donor_name': donation.donor.realname,
+            'created_at': donation.created_at
+        } for donation in donations]
+        return jsonify(donations_list)
+    except Exception as e:
+        return jsonify({'message': 'Failed to retrieve donations', 'error': str(e)}), 500
 
 # Update a donation
 @donation_routes.route('/admin/donations/<int:donation_id>', methods=['PUT'])
