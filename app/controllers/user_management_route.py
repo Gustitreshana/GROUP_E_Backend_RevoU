@@ -126,6 +126,7 @@ def create_user():
         return jsonify({'message': 'Failed to add user', 'error': str(e)}), 500
     
 @user_routes.route('/admin/user/<int:user_id>', methods=["PUT"])
+@jwt_required() 
 def update_user(user_id):
     data = request.get_json()
     try:
@@ -148,6 +149,7 @@ def update_user(user_id):
         return jsonify({'message': 'Failed to update user', 'error': str(e)}), 500
 
 @user_routes.route('/admin/user/<int:user_id>', methods=["DELETE"])
+@jwt_required() 
 def delete_user(user_id):
     try:
         user = User.query.filter_by(id=user_id).first()
