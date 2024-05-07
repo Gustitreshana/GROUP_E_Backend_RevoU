@@ -10,6 +10,7 @@ bcrypt = Bcrypt()
 
 # Get all users
 @user_routes.route('/register/user/data', methods=["GET"])
+@jwt_required()
 def register_page():
     try:
         users = User.query.all()
