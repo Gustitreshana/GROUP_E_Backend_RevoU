@@ -2,11 +2,13 @@ from flask import Blueprint, request, jsonify
 from models.contact_model import Contact
 from utils.db import db
 from sqlalchemy.exc import SQLAlchemyError
+from flask_jwt_extended import jwt_required
 
 contact_routes = Blueprint('contact_routes', __name__)
 
 # Get all contacts
 @contact_routes.route('/contacts', methods=["GET"])
+@jwt_required()
 def get_contacts():
     try:
         contacts = Contact.query.all()
@@ -17,6 +19,7 @@ def get_contacts():
 
 # Add a new contact
 @contact_routes.route('/contacts', methods=["POST"])
+@jwt_required()
 def add_contact():
     data = request.get_json()
     try:
@@ -30,6 +33,7 @@ def add_contact():
 
 # Update a contact
 @contact_routes.route('/contacts/user/<int:contact_id>', methods=["PUT"])
+@jwt_required()
 def update_contact(contact_id):
     data = request.get_json()
     try:
@@ -47,6 +51,7 @@ def update_contact(contact_id):
 
 # Delete a contact
 @contact_routes.route('/contacts/user/<int:contact_id>', methods=["DELETE"])
+@jwt_required()
 def delete_contact(contact_id):
     try:
         contact = Contact.query.filter_by(id=contact_id).first()
