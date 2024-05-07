@@ -5,6 +5,7 @@ from app.controllers.user_management_route import user_routes
 from app.controllers.contact_management_route import contact_routes
 from app.controllers.donation_management_route import donation_routes
 from app.controllers.program import program_route
+from app.controllers.donatur import donatur_route
 from dotenv import load_dotenv
 from flask_cors import CORS
 import os
@@ -30,8 +31,8 @@ jwt = JWTManager(app)
 app.register_blueprint(user_routes)
 app.register_blueprint(contact_routes)
 app.register_blueprint(donation_routes)
-app.register_blueprint(program_route.program_blueprint, url_prefix='/program')
-
+app.register_blueprint(program_route.program_blueprint, url_prefix='/programs')
+app.register_blueprint(donatur_route.donatur_blueprint, url_prefix='/programs/donatur')
 
 # Defining routes here
 @app.route('/')
