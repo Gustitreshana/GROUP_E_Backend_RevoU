@@ -8,7 +8,7 @@ from sqlalchemy.exc import SQLAlchemyError
 user_routes = Blueprint('user_routes', __name__)
 bcrypt = Bcrypt()
 
-# Registration Page
+# Get all users
 @user_routes.route('/register/user/data', methods=["GET"])
 def register_page():
     try:
