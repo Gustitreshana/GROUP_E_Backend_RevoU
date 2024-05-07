@@ -26,7 +26,7 @@ def create_donation():
         return jsonify({'message': 'Failed to add donation', 'error': str(e)}), 500
 
 # Get all donations
-@donation_routes.route('/donations/users/data', methods=['GET'])
+@donation_routes.route('/donations/user/data', methods=['GET'])
 @jwt_required()
 def get_donations():
     try:
