@@ -2,7 +2,7 @@ from flask import Blueprint, request, jsonify
 from flask_bcrypt import Bcrypt
 from models.user_model import User
 from utils.db import db
-from flask_jwt_extended import create_access_token
+from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity
 from sqlalchemy.exc import SQLAlchemyError
 
 user_routes = Blueprint('user_routes', __name__)
@@ -12,10 +12,8 @@ bcrypt = Bcrypt()
 @user_routes.route('/register', methods=["GET"])
 def register_page():
     try:
-        # Querying to get all users
         users = User.query.all()
         
-        # Converting user data to JSON format
         users_data = []
         for user in users:
             user_data = {
@@ -30,10 +28,58 @@ def register_page():
             }
             users_data.append(user_data)
         
-        # Returning user data as JSON
         return jsonify(users_data)
     except SQLAlchemyError as e:
-        # Returning an error message if there is a database query error
+        return jsonify({'error': 'Failed to fetch user data', 'message': str(e)}), 500
+
+# Get current user
+@user_routes.route('/current-user', methods=["GET"])
+@jwt_required()
+def get_current_user():
+    try:
+        user_id = get_jwt_identity()
+        user = User.query.filter_by(id=user_id).first()
+        
+        if not user:
+            return jsonify({'message': 'User not found'}), 404
+        
+        user_data = {
+            'id': user.id,
+            'name': user.username,
+            'email': user.email,
+            'realname': user.realname,
+            'address': user.address,
+            'occupation': user.occupation,
+            'created_at': user.created_at,
+            'updated_at': user.updated_at
+        }
+        
+        return jsonify(user_data)
+    except SQLAlchemyError as e:
+        return jsonify({'error': 'Failed to fetch user data', 'message': str(e)}), 500
+
+# Get user by id
+@user_routes.route('/user/<int:user_id>', methods=["GET"])
+def get_user_by_id(user_id):
+    try:
+        user = User.query.filter_by(id=user_id).first()
+        
+        if not user:
+            return jsonify({'message': 'User not found'}), 404
+        
+        user_data = {
+            'id': user.id,
+            'name': user.username,
+            'email': user.email,
+            'realname': user.realname,
+            'address': user.address,
+            'occupation': user.occupation,
+            'created_at': user.created_at,
+            'updated_at': user.updated_at
+        }
+        
+        return jsonify(user_data)
+    except SQLAlchemyError as e:
         return jsonify({'error': 'Failed to fetch user data', 'message': str(e)}), 500
 
 # Registering a new user
@@ -42,22 +88,19 @@ def create_user():
     data = request.get_json()
 
     try:
-        # Checking if the user already exists
         user_exists = User.query.filter_by(email=data['email']).first()
         if user_exists:
             return jsonify({'message': 'User already registered'}), 400
-
-        # Encrypting password with bcrypt
+        
         hashed_password = bcrypt.generate_password_hash(data['password']).decode('utf-8')
 
-        # Creating a new user
         new_user = User(
             username=data['username'],
             email=data['email'],
             password_hash=hashed_password,
-            realname=data.get('realname'),  # Menambahkan realname
-            address=data.get('address'),    # Menambahkan address
-            occupation=data.get('occupation')  # Menambahkan occupation
+            realname=data.get('realname'),
+            address=data.get('address'),
+            occupation=data.get('occupation')
         )
         db.session.add(new_user)
         db.session.commit()
@@ -66,7 +109,8 @@ def create_user():
     except Exception as e:
         db.session.rollback()
         return jsonify({'message': 'Failed to add user', 'error': str(e)}), 500
-    
+
+# Update user
 @user_routes.route('/admin/user/<int:user_id>', methods=["PUT"])
 def update_user(user_id):
     data = request.get_json()
@@ -76,9 +120,9 @@ def update_user(user_id):
             return jsonify({'message': 'User not found'}), 404
         user.username = data.get('username', user.username)
         user.email = data.get('email', user.email)
-        user.realname = data.get('realname', user.realname)  # Memperbarui realname
-        user.address = data.get('address', user.address)    # Memperbarui address
-        user.occupation = data.get('occupation', user.occupation)  # Memperbarui occupation
+        user.realname = data.get('realname', user.realname)
+        user.address = data.get('address', user.address)
+        user.occupation = data.get('occupation', user.occupation)
         # Update password if provided
         if 'password' in data:
             hashed_password = bcrypt.generate_password_hash(data['password']).decode('utf-8')
@@ -89,6 +133,7 @@ def update_user(user_id):
         db.session.rollback()
         return jsonify({'message': 'Failed to update user', 'error': str(e)}), 500
 
+# Delete user
 @user_routes.route('/admin/user/<int:user_id>', methods=["DELETE"])
 def delete_user(user_id):
     try:
@@ -102,16 +147,14 @@ def delete_user(user_id):
         db.session.rollback()
         return jsonify({'message': 'Failed to delete user', 'error': str(e)}), 500
 
-# Login Page
+# Login user
 @user_routes.route('/login', methods=["POST"])
 def login_user():
     data = request.get_json()
 
     try:
-        # Checking if the user is registered
         user = User.query.filter_by(email=data['email']).first()
         if user and bcrypt.check_password_hash(user.password_hash, data['password']):
-            # Creating JWT token
             access_token = create_access_token(identity=user.id)
             return jsonify({'message': 'Login successful', 'access_token': access_token}), 200
         else:
