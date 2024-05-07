@@ -92,6 +92,40 @@ def get_user(user_id):
             data={}
         ) 
     
+from flask_jwt_extended import jwt_required, get_jwt_identity
+
+@user_routes.route('/profile', methods=["PUT"])
+@jwt_required()  # Membutuhkan token JWT untuk akses
+def update_profile():
+    try:
+        # Mendapatkan identitas pengguna yang saat ini login dari token JWT
+        current_user_id = get_jwt_identity()
+
+        # Mendapatkan data pengguna yang saat ini login
+        user = User.query.filter_by(id=current_user_id).first()
+
+        # Memastikan pengguna ditemukan
+        if not user:
+            return jsonify({'error': 'User not found'}), 404
+
+        # Mendapatkan data yang akan diubah dari permintaan
+        data = request.json
+
+        # Memperbarui data pengguna
+        user.username = data.get('username', user.username)
+        user.email = data.get('email', user.email)
+        user.realname = data.get('realname', user.realname)
+        user.address = data.get('address', user.address)
+        user.occupation = data.get('occupation', user.occupation)
+
+        # Commit perubahan ke database
+        db.session.commit()
+
+        # Mengembalikan pesan sukses
+        return jsonify({'message': 'Profile updated successfully'}), 200
+    except SQLAlchemyError as e:
+        # Mengembalikan pesan kesalahan jika ada kesalahan kueri basis data
+        return jsonify({'error': 'Failed to update profile', 'message': str(e)}), 500
 
 
 # Registering a new user
