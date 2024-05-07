@@ -1,8 +1,9 @@
 from flask import Blueprint, request, jsonify
 from flask_bcrypt import Bcrypt
 from models.user_model import User
+from app.utils.api_response import api_response
 from utils.db import db
-from flask_jwt_extended import create_access_token
+from flask_jwt_extended import create_access_token, get_jwt_identity, jwt_required
 from sqlalchemy.exc import SQLAlchemyError
 
 user_routes = Blueprint('user_routes', __name__)
@@ -35,6 +36,63 @@ def register_page():
     except SQLAlchemyError as e:
         # Returning an error message if there is a database query error
         return jsonify({'error': 'Failed to fetch user data', 'message': str(e)}), 500
+
+@user_routes.route('/users', methods=["GET"])
+@jwt_required()  # Membutuhkan token JWT untuk akses
+def register_page():
+    try:
+        # Mendapatkan identitas pengguna yang saat ini login dari token JWT
+        current_user_id = get_jwt_identity()
+
+        # Querying untuk mendapatkan data pengguna yang saat ini login
+        user = User.query.filter_by(id=current_user_id).first()
+
+        # Memastikan pengguna ditemukan
+        if not user:
+            return jsonify({'error': 'User not found'}), 404
+
+        # Mengonversi data pengguna ke format JSON
+        user_data = {
+            'id': user.id,
+            'name': user.username,
+            'email': user.email,
+            'realname': user.realname,
+            'address': user.address,
+            'occupation': user.occupation,
+            'created_at': user.created_at,
+            'updated_at': user.updated_at
+        }
+
+        # Mengembalikan data pengguna sebagai JSON
+        return jsonify(user_data)
+    except SQLAlchemyError as e:
+        # Mengembalikan pesan kesalahan jika ada kesalahan kueri basis data
+        return jsonify({'error': 'Failed to fetch user data', 'message': str(e)}), 500
+
+@user_routes.route('/users/<int:user_id>', methods=['GET'])
+def get_user(user_id):
+    try:
+        user = User.query.get(user_id)
+        if user:
+            return api_response(
+                status_code=200,
+                message="Daftar data dari id karyawan berhasil ditampilkan",
+                data=[user.as_dict()]
+            )  
+        else:
+            return api_response(
+                status_code=400,
+                message="Data karyawan tidak ditemukan",
+                data={}
+            )  
+    except Exception as e:
+        return api_response(
+            status_code=500,
+            message=str(e),
+            data={}
+        ) 
+    
+
 
 # Registering a new user
 @user_routes.route('/register', methods=["POST"])
