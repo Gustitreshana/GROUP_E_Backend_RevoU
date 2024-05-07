@@ -92,8 +92,6 @@ def get_user(user_id):
             data={}
         ) 
     
-from flask_jwt_extended import jwt_required, get_jwt_identity
-
 @user_routes.route('/profile', methods=["PUT"])
 @jwt_required()  # Membutuhkan token JWT untuk akses
 def update_profile():
