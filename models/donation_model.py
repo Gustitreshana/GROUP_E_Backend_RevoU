@@ -1,13 +1,13 @@
 from utils.db import db
-from sqlalchemy import ForeignKey
+from sqlalchemy import ForeignKey, Integer, Float
 from sqlalchemy.sql import func
 from sqlalchemy import DateTime
 
 class Donation(db.Model):
     __tablename__ = 'donations'
-    id = db.Column(db.Integer, primary_key=True)
-    nominal = db.Column(db.Float, nullable=False)
-    from_id = db.Column(db.Integer, ForeignKey('users.id'), nullable=False)
+    id = db.Column(Integer, primary_key=True)
+    nominal = db.Column(Float, nullable=False)
+    from_id = db.Column(Integer, ForeignKey('users.id'), nullable=False)
     created_at = db.Column(DateTime(timezone=True), server_default=func.now())
     updated_at = db.Column(DateTime(timezone=True), onupdate=func.now())
 
