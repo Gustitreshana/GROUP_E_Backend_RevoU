@@ -13,7 +13,7 @@ def get_contacts():
         contacts_data = [contact.to_dict() for contact in contacts]
         return jsonify(contacts_data)
     except SQLAlchemyError as e:
-        return jsonify({'error': 'Gagal mengambil data kontak', 'message': str(e)}), 500
+        return jsonify({'error': 'Failed to fetch contact data', 'message': str(e)}), 500
 
 # Add a new contact
 @contact_routes.route('/contacts', methods=["POST"])
@@ -23,38 +23,38 @@ def add_contact():
         new_contact = Contact(name=data['name'], email=data['email'], messages=data.get('messages'))
         db.session.add(new_contact)
         db.session.commit()
-        return jsonify({'message': 'Kontak berhasil ditambahkan'}), 201
+        return jsonify({'message': 'Contact successfully added'}), 200
     except SQLAlchemyError as e:
         db.session.rollback()
-        return jsonify({'message': 'Gagal menambahkan kontak', 'error': str(e)}), 500
+        return jsonify({'message': 'Failed to add contact', 'error': str(e)}), 500
 
 # Update a contact
-@contact_routes.route('/contacts/<int:contact_id>', methods=["PUT"])
+@contact_routes.route('/contacts/user/<int:contact_id>', methods=["PUT"])
 def update_contact(contact_id):
     data = request.get_json()
     try:
         contact = Contact.query.filter_by(id=contact_id).first()
         if not contact:
-            return jsonify({'message': 'Kontak tidak ditemukan'}), 404
+            return jsonify({'message': 'Contact not found'}), 404
         contact.name = data.get('name', contact.name)
         contact.email = data.get('email', contact.email)
         contact.messages = data.get('messages', contact.messages)
         db.session.commit()
-        return jsonify({'message': 'Kontak berhasil diperbarui'}), 200
+        return jsonify({'message': 'Contact successfully updated'}), 200
     except SQLAlchemyError as e:
         db.session.rollback()
-        return jsonify({'message': 'Gagal memperbarui kontak', 'error': str(e)}), 500
+        return jsonify({'message': 'Failed to update contact', 'error': str(e)}), 500
 
 # Delete a contact
-@contact_routes.route('/contacts/<int:contact_id>', methods=["DELETE"])
+@contact_routes.route('/contacts/user/<int:contact_id>', methods=["DELETE"])
 def delete_contact(contact_id):
     try:
         contact = Contact.query.filter_by(id=contact_id).first()
         if not contact:
-            return jsonify({'message': 'Kontak tidak ditemukan'}), 404
+            return jsonify({'message': 'Contact not found'}), 404
         db.session.delete(contact)
         db.session.commit()
-        return jsonify({'message': 'Kontak berhasil dihapus'}), 200
+        return jsonify({'message': 'Contact successfully deleted'}), 200
     except SQLAlchemyError as e:
         db.session.rollback()
-        return jsonify({'message': 'Gagal menghapus kontak', 'error': str(e)}), 500
+        return jsonify({'message': 'Failed to delete contact', 'error': str(e)}), 500
