@@ -1,37 +1,42 @@
-from flask import Flask
-from app.controllers.program import program_route
+from flask import Flask, jsonify
+from flask_jwt_extended import JWTManager
+from app.utils.db import init_db
 from app.controllers.user_management_route import user_routes
 from app.controllers.contact_management_route import contact_routes
 from app.controllers.donation_management_route import donation_routes
-
+from app.controllers.program import program_route
+from dotenv import load_dotenv
+from flask_cors import CORS
 import os
-from app.utils.db import db
-# from app.models import enclosure
 
+# Initializing Flask application
 app = Flask(__name__)
 
-DATABASE_TYPE = os.getenv('DATABASE_TYPE')
-DATABASE_USER = os.getenv('DATABASE_USER')
-DATABASE_PASSWORD = os.getenv('DATABASE_PASSWORD')
-DATABASE_HOST = os.getenv('DATABASE_HOST')
-DATABASE_NAME = os.getenv('DATABASE_NAME')
-DATABASE_PORT = os.getenv('DATABASE_PORT')
+CORS(app)
 
-# Perbaikan: Gunakan "SQLALCHEMY_DATABASE_URI" bukan "SQLALCHEMY_DATABASE_URL"
-app.config["SQLALCHEMY_DATABASE_URI"] = f"{DATABASE_TYPE}://{DATABASE_USER}:{DATABASE_PASSWORD}@{DATABASE_HOST}:{DATABASE_PORT}/{DATABASE_NAME}"
+load_dotenv()
 
-db.init_app(app)
+# Setting database URI directly
+app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URI')
 
-# Perbaikan: Gunakan url_prefix yang benar sesuai kebutuhan Anda
-app.register_blueprint(user_routes._blueprints, url_prefix='/')
+# Initializing database
+init_db(app)
+
+# Setting JWT secret key directly
+app.config['JWT_SECRET_KEY'] = os.getenv('JWT_SECRET_KEY')
+jwt = JWTManager(app)
+
+# Registering blueprints
+app.register_blueprint(user_routes)
+app.register_blueprint(contact_routes)
+app.register_blueprint(donation_routes)
 app.register_blueprint(program_route.program_blueprint, url_prefix='/program')
-app.register_blueprint(contact_routes._blueprints, url_prefix='/')
-app.register_blueprint(donation_routes._blueprints, url_prefix='/')
 
-# implementasi versioning api agar lebih ringkas bisa seperti ini, contohnya
-# app.register_blueprint(animal_route.animal_blueprint, url_prefix='/v1/animal')
 
+# Defining routes here
 @app.route('/')
-def my_app():
+def index():
+    return jsonify({'message': 'Hello, Wellcome CORS is enabled!'})
 
-    return "Wellcome in my 6th Module"
+if __name__ == "__main__":
+    app.run(host="0.0.0.0", port=5000, debug=True)
