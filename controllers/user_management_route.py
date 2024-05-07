@@ -9,7 +9,7 @@ user_routes = Blueprint('user_routes', __name__)
 bcrypt = Bcrypt()
 
 # Registration Page
-@user_routes.route('/register', methods=["GET"])
+@user_routes.route('/register/user/data', methods=["GET"])
 def register_page():
     try:
         users = User.query.all()
@@ -33,7 +33,7 @@ def register_page():
         return jsonify({'error': 'Failed to fetch user data', 'message': str(e)}), 500
 
 # Get current user
-@user_routes.route('/current-user', methods=["GET"])
+@user_routes.route('/current-user/data', methods=["GET"])
 @jwt_required()
 def get_current_user():
     try:
@@ -59,7 +59,7 @@ def get_current_user():
         return jsonify({'error': 'Failed to fetch user data', 'message': str(e)}), 500
 
 # Get user by id
-@user_routes.route('/user/<int:user_id>', methods=["GET"])
+@user_routes.route('/data/user/<int:user_id>', methods=["GET"])
 def get_user_by_id(user_id):
     try:
         user = User.query.filter_by(id=user_id).first()
@@ -83,7 +83,7 @@ def get_user_by_id(user_id):
         return jsonify({'error': 'Failed to fetch user data', 'message': str(e)}), 500
 
 # Registering a new user
-@user_routes.route('/register', methods=["POST"])
+@user_routes.route('/register/user', methods=["POST"])
 def create_user():
     data = request.get_json()
 
@@ -111,7 +111,7 @@ def create_user():
         return jsonify({'message': 'Failed to add user', 'error': str(e)}), 500
 
 # Update user
-@user_routes.route('/admin/user/<int:user_id>', methods=["PUT"])
+@user_routes.route('/update/user/admin<int:user_id>', methods=["PUT"])
 @jwt_required()
 def update_user(user_id):
     data = request.get_json()
@@ -134,8 +134,37 @@ def update_user(user_id):
         db.session.rollback()
         return jsonify({'message': 'Failed to update user', 'error': str(e)}), 500
 
+# Update current user
+@user_routes.route('/update/current-user', methods=["PUT"])
+@jwt_required()
+def update_current_user():
+    user_id = get_jwt_identity()
+    data = request.get_json()
+    try:
+        user = User.query.filter_by(id=user_id).first()
+        if not user:
+            return jsonify({'message': 'User not found'}), 404
+        
+        # Memperbarui data pengguna yang sedang login
+        user.username = data.get('username', user.username)
+        user.email = data.get('email', user.email)
+        user.realname = data.get('realname', user.realname)
+        user.address = data.get('address', user.address)
+        user.occupation = data.get('occupation', user.occupation)
+        
+        # Update password jika disediakan
+        if 'password' in data:
+            hashed_password = bcrypt.generate_password_hash(data['password']).decode('utf-8')
+            user.password_hash = hashed_password
+        
+        db.session.commit()
+        return jsonify({'message': 'User successfully updated'}), 200
+    except SQLAlchemyError as e:
+        db.session.rollback()
+        return jsonify({'message': 'Failed to update user', 'error': str(e)}), 500
+
 # Delete user
-@user_routes.route('/admin/user/<int:user_id>', methods=["DELETE"])
+@user_routes.route('/user/admin/<int:user_id>', methods=["DELETE"])
 @jwt_required()
 def delete_user(user_id):
     try:
@@ -150,7 +179,7 @@ def delete_user(user_id):
         return jsonify({'message': 'Failed to delete user', 'error': str(e)}), 500
 
 # Login user
-@user_routes.route('/login', methods=["POST"])
+@user_routes.route('/login/user', methods=["POST"])
 def login_user():
     data = request.get_json()
 

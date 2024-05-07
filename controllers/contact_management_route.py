@@ -7,7 +7,7 @@ from flask_jwt_extended import jwt_required
 contact_routes = Blueprint('contact_routes', __name__)
 
 # Get all contacts
-@contact_routes.route('/contacts', methods=["GET"])
+@contact_routes.route('/contacts/user/data', methods=["GET"])
 @jwt_required()
 def get_contacts():
     try:
@@ -18,7 +18,7 @@ def get_contacts():
         return jsonify({'error': 'Failed to fetch contact data', 'message': str(e)}), 500
 
 # Add a new contact
-@contact_routes.route('/contacts', methods=["POST"])
+@contact_routes.route('/contacts/user', methods=["POST"])
 @jwt_required()
 def add_contact():
     data = request.get_json()
@@ -32,7 +32,7 @@ def add_contact():
         return jsonify({'message': 'Failed to add contact', 'error': str(e)}), 500
 
 # Update a contact
-@contact_routes.route('/contacts/user/<int:contact_id>', methods=["PUT"])
+@contact_routes.route('/contacts/user/admin/<int:contact_id>', methods=["PUT"])
 @jwt_required()
 def update_contact(contact_id):
     data = request.get_json()
@@ -50,7 +50,7 @@ def update_contact(contact_id):
         return jsonify({'message': 'Failed to update contact', 'error': str(e)}), 500
 
 # Delete a contact
-@contact_routes.route('/contacts/user/<int:contact_id>', methods=["DELETE"])
+@contact_routes.route('/contacts/user/admin/<int:contact_id>', methods=["DELETE"])
 @jwt_required()
 def delete_contact(contact_id):
     try:

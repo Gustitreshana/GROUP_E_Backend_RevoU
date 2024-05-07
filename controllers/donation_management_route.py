@@ -26,7 +26,7 @@ def create_donation():
         return jsonify({'message': 'Failed to add donation', 'error': str(e)}), 500
 
 # Get all donations
-@donation_routes.route('/donations', methods=['GET'])
+@donation_routes.route('/donations/users/data', methods=['GET'])
 @jwt_required()
 def get_donations():
     try:
@@ -42,7 +42,7 @@ def get_donations():
         return jsonify({'message': 'Failed to retrieve donations', 'error': str(e)}), 500
 
 # Update a donation
-@donation_routes.route('/admin/donations/<int:donation_id>', methods=['PUT'])
+@donation_routes.route('/donations/user/admin/<int:donation_id>', methods=['PUT'])
 @jwt_required()
 def update_donation(donation_id):
     data = request.get_json()
@@ -59,7 +59,7 @@ def update_donation(donation_id):
         return jsonify({'message': 'Failed to update donation', 'error': str(e)}), 500
 
 # Delete a donation
-@donation_routes.route('/admin/donations/<int:donation_id>', methods=['DELETE'])
+@donation_routes.route('/donations/user/admin/<int:donation_id>', methods=['DELETE'])
 @jwt_required()
 def delete_donation(donation_id):
     try:
