@@ -145,14 +145,12 @@ def update_current_user():
         if not user:
             return jsonify({'message': 'User not found'}), 404
         
-        # Memperbarui data pengguna yang sedang login
         user.username = data.get('username', user.username)
         user.email = data.get('email', user.email)
         user.realname = data.get('realname', user.realname)
         user.address = data.get('address', user.address)
         user.occupation = data.get('occupation', user.occupation)
         
-        # Update password jika disediakan
         if 'password' in data:
             hashed_password = bcrypt.generate_password_hash(data['password']).decode('utf-8')
             user.password_hash = hashed_password
