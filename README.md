@@ -51,7 +51,7 @@ For more detailed information on API endpoints and their usage, please refer to 
 ### Registering a New User
 
 ```bash
-POST /register
+POST /register/user
 {
 "username": "newuser",
 "email": "newuser@example.com",
@@ -65,7 +65,7 @@ POST /register
 ### Login User
 
 ```bash
-POST /login
+POST /login/user
 {
 "email": "newuser@example.com",
 "password": "strongpassword"
@@ -75,12 +75,11 @@ POST /login
 ### Adding Contact
 
 ```bash
-POST /contacts
+POST /contacts/user
 {
 "name": "Contact Name",
 "email": "contact@example.com",
-"phone": "1234567890",
-"user_id": 1
+"messages": "Optional messages here"
 }
 ```
 
@@ -97,7 +96,7 @@ POST /donations
 ### Viewing All Donations
 
 ```bash
-GET /donations
+GET /donations/user/data
 ```
 
 This update includes the addition of donation management and minor fixes to syntax and provided information. Ensure to update the `.env` and `requirements.txt` files according to the latest needs of your project.
