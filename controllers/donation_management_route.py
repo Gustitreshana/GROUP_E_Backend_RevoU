@@ -20,7 +20,7 @@ def create_donation():
         )
         db.session.add(new_donation)
         db.session.commit()
-        return jsonify({'message': 'Donation successfully added', 'donation_id': new_donation.id}), 201
+        return jsonify({'message': 'Donation successfully added', 'donation_id': new_donation.id}), 200
     except Exception as e:
         db.session.rollback()
         return jsonify({'message': 'Failed to add donation', 'error': str(e)}), 500
@@ -37,7 +37,7 @@ def get_donations():
             'donor_name': donation.donor.realname,
             'created_at': donation.created_at
         } for donation in donations]
-        return jsonify(donations_list)
+        return jsonify({'message': 'Donations retrieved successfully', 'donations': donations_list}), 200
     except Exception as e:
         return jsonify({'message': 'Failed to retrieve donations', 'error': str(e)}), 500
 

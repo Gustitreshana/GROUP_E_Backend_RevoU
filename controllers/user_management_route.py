@@ -29,7 +29,7 @@ def register_page():
             }
             users_data.append(user_data)
         
-        return jsonify(users_data)
+        return jsonify({'message': 'User data successfully retrieved', 'users': users_data}), 200
     except SQLAlchemyError as e:
         return jsonify({'error': 'Failed to fetch user data', 'message': str(e)}), 500
 
@@ -54,8 +54,7 @@ def get_current_user():
             'created_at': user.created_at,
             'updated_at': user.updated_at
         }
-        
-        return jsonify(user_data)
+        return jsonify({'message': 'User data successfully retrieved', 'user': user_data}), 200
     except SQLAlchemyError as e:
         return jsonify({'error': 'Failed to fetch user data', 'message': str(e)}), 500
 
@@ -78,8 +77,7 @@ def get_user_by_id(user_id):
             'created_at': user.created_at,
             'updated_at': user.updated_at
         }
-        
-        return jsonify(user_data)
+        return jsonify({'message': 'User data successfully retrieved', 'user': user_data}), 200
     except SQLAlchemyError as e:
         return jsonify({'error': 'Failed to fetch user data', 'message': str(e)}), 500
 
@@ -125,6 +123,7 @@ def update_user(user_id):
         user.realname = data.get('realname', user.realname)
         user.address = data.get('address', user.address)
         user.occupation = data.get('occupation', user.occupation)
+        
         # Update password if provided
         if 'password' in data:
             hashed_password = bcrypt.generate_password_hash(data['password']).decode('utf-8')

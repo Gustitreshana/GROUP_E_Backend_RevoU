@@ -13,7 +13,7 @@ def get_contacts():
     try:
         contacts = Contact.query.all()
         contacts_data = [contact.to_dict() for contact in contacts]
-        return jsonify(contacts_data)
+        return jsonify({'message': 'Contacts successfully fetched', 'data': contacts_data}), 200
     except SQLAlchemyError as e:
         return jsonify({'error': 'Failed to fetch contact data', 'message': str(e)}), 500
 
