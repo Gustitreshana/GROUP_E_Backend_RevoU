@@ -15,10 +15,9 @@ class Donatur_repo():
     
     def update_donatur(self, id, donatur):
         donatur_obj = Donatur.query.get(id)
-        donatur_obj.species = donatur.species
-        donatur_obj.age = donatur.age
-        donatur_obj.gender = donatur.gender
-        donatur_obj.special_requirement = donatur.special_requirement
+        donatur_obj.nama = donatur.nama
+        donatur_obj.alamat = donatur.alamat
+        donatur_obj.nomor_telepon = donatur.nomor_telepon
         
         db.session.commit()
         return donatur_obj
@@ -30,6 +29,6 @@ class Donatur_repo():
         db.session.commit()
         return donatur_obj
     
-    def search_donaturs(self, species):
-        donaturs = Donatur.query.filter(Donatur.species.like(f"%{species}%")).all()
+    def search_donaturs(self, nama):
+        donaturs = Donatur.query.filter(Donatur.nama.like(f"%{nama}%")).all()
         return donaturs

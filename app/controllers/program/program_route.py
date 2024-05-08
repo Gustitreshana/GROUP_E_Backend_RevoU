@@ -1,13 +1,13 @@
 from flask import Blueprint, jsonify, request, json
 # from app.utils.database import db
-from models.program import Program
-from service.program_service import Program_service
+from app.models.program import Program
+from app.service.program_service import Program_service
 from app.utils.api_response import api_response
 from app.controllers.program.schema.create_program_request import Create_program_request
 from app.controllers.program.schema.update_program_request import Update_program_request
 from pydantic import ValidationError
 
-program_blueprint = Blueprint('customer_endpoint', __name__)
+program_blueprint = Blueprint('program_endpoint', __name__)
 
 @program_blueprint.route('/', methods=['POST'])
 def create_program():

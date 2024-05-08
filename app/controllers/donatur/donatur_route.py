@@ -74,7 +74,7 @@ def search_donaturs():
         request_data = request.args
         
         donatur_service = Donatur_service()
-        donaturs = donatur_service.search_donaturs(request_data['species'])
+        donaturs = donatur_service.search_donaturs(request_data['nama'])
         if donaturs:
         # return [donatur.as_dict() for donatur in donaturs], 200
             return api_response(
@@ -104,7 +104,7 @@ def get_donatur(donatur_id):
             return api_response(
                 status_code=200,
                 message="Data dari id binatang berhasil ditampilkan",
-                data=[donatur.as_dict()]
+                data=[donatur.serialize()]
             )  
         else:
             return api_response(
@@ -163,7 +163,7 @@ def delete_donatur(donatur_id):
             )
         return api_response(
             status_code=200,
-            message="Data binatang berhasil dihapus",
+            message="Data donatur berhasil dihapus",
             data=donatur
         )
     except Exception as e:

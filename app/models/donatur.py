@@ -1,8 +1,12 @@
 from app.utils.db import db
 from sqlalchemy import Integer, String, Text, DECIMAL, DateTime, ForeignKey
-from sqlalchemy.orm import mapped_column, relationship
+from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
 
+donatur_donasi_association = db.Table('donatur_donasi_association',
+    db.Column('donatur_id', db.Integer, db.ForeignKey('donatur.donatur_id')),
+    db.Column('donasi_id', db.Integer, db.ForeignKey('donasi.donasi_id'))
+)
 
 class Donatur(db.Model):
     __tablename__ = 'donatur'
@@ -15,10 +19,8 @@ class Donatur(db.Model):
     created_at = db.Column(DateTime(timezone=True), server_default=func.now())
     updated_at = db.Column(DateTime(timezone=True), server_default=func.now())
     
-
-    # Relasi dengan model User
-    # user_id = mapped_column(Integer, ForeignKey("users.id", ondelete="CASCADE"))
     user = relationship("User", back_populates="donatur")
+    donasi = relationship("Donasi", secondary=donatur_donasi_association, back_populates="donatur_donasi")
 
     def __repr__(self):
         return f'<Donatur {self.donatur_id}>'

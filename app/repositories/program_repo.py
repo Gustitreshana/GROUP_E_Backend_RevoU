@@ -1,6 +1,6 @@
 
-from models.program import Program
-from utils.db import db
+from app.models.program import Program
+from app.utils.db import db
 
 class Program_repo():
     def get_list_program(self):

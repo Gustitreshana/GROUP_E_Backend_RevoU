@@ -7,12 +7,10 @@ import os
 # Creating a SQLAlchemy db object without direct initialization
 db = SQLAlchemy()
 
-DATABASE_TYPE = os.getenv("DATABASE_TYPE")
-DATABASE_USERNAME = os.getenv("DATABASE_USERNAME")
-DATABASE_PASSWORD = os.getenv("DATABASE_PASSWORD")
-DATABASE_HOST = os.getenv("DATABASE_HOST")
-DATABASE_PORT = os.getenv("DATABASE_PORT")
-DATABASE_NAME = os.getenv("DATABASE_NAME")
+DB_USERNAME = os.getenv("DB_USERNAME")
+DB_PASSWORD = os.getenv("DB_PASSWORD")
+DB_HOST = os.getenv("DB_HOST")
+DB_NAME = os.getenv("DB_NAME")
 DATABASE_URI = os.getenv('DATABASE_URI')
 
 engine = create_engine(DATABASE_URI)

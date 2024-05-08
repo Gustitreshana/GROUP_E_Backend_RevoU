@@ -13,6 +13,9 @@ class Program(db.Model):
     updated_at = db.Column(DateTime(timezone=True), onupdate=func.now())
 
     # Relationship list
+    # Relasi dengan model donasi
+    # donasi = relationship("Donasi", back_populates="program")
+
     # reviews = relationship("Review", cascade="all,delete-orphan")
     def as_dict(self):
         return {

@@ -18,9 +18,30 @@ class User(db.Model, UserMixin):
     role = db.Column(db.String(100), nullable=True)
     updated_at = db.Column(DateTime(timezone=True), onupdate=func.now())
 
+    # Relasi dengan model Account
+    donatur = relationship("Donatur", back_populates="user", cascade="all, delete-orphan")
+
+    def serialize(self, full=True):
+        if full:
+            return {
+                'id': self.id,
+                'email': self.email,
+                'name': self.name,
+                'password': self.password,
+                'role': self.role,
+                'created_at': self.created_at.strftime("%Y-%m-%d %H:%M:%S"),
+                'updated_at': self.updated_at.strftime("%Y-%m-%d %H:%M:%S")
+            }
+        else:
+            return {
+                'id': self.id,
+                'email': self.email,
+                'name': self.name,
+                'role': self.role
+            }
 
     def __repr__(self):
-        return f'<User {self.name}>'
+        return f'<User {self.id}>'
     
     def set_password(self, password):
         self.password = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')

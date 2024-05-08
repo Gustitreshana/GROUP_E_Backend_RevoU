@@ -1,10 +1,13 @@
-
-
 from app.utils.db import db
 from sqlalchemy import Integer, String, DateTime, DECIMAL, ForeignKey
-from sqlalchemy.orm import mapped_column, relationship
+from sqlalchemy.orm import relationship
 from sqlalchemy import func
 from app.models.donatur import Donatur
+
+donatur_donasi_association = db.Table('donatur_donasi_association',
+    db.Column('donatur_id', db.Integer, db.ForeignKey('donatur.donatur_id')),
+    db.Column('donasi_id', db.Integer, db.ForeignKey('donasi.donasi_id'))
+)
 
 class Donasi(db.Model):
     __tablename__ = "donasi"
@@ -17,11 +20,7 @@ class Donasi(db.Model):
     rupiah = db.Column(DECIMAL(precision=10, scale=2))
     tipe_pembayaran = db.Column(db.String(255), nullable= False)
 
-    # # Relationship to Account model for the 'from_account'
-    # from_account = relationship("Account", foreign_keys=[from_account_id])
-
-    # # Relationship to Account model for the 'to_account'
-    # to_account = relationship("Account", foreign_keys=[to_account_id])
+    donatur = relationship("Donatur", secondary=donatur_donasi_association, back_populates="donasi")
 
     def __repr__(self):
         return f'<Donasi {self.donasi_id}>'

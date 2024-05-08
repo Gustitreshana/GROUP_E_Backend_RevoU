@@ -1,5 +1,5 @@
-from repositories.program_repo import Program_repo
-from models.program import Program
+from app.repositories.program_repo import Program_repo
+from app.models.program import Program
 
 
 class Program_service:

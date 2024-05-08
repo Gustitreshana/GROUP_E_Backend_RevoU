@@ -30,6 +30,7 @@ typing-extensions = "4.11.0"
 werkzeug = "3.0.2"
 pydantic = "^2.7.1"
 flask-login = "^0.6.3"
+mysql-connector-python = "^8.4.0"
 
 
 [build-system]
