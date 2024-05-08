@@ -21,7 +21,7 @@ def create_donation():
         )
         db.session.add(new_donation)
         db.session.commit()
-        return jsonify({'message': 'Donation successfully added', 'donation_id': new_donation.id}), 200
+        return jsonify({'message': 'Donation successfully added', 'donation_id': new_donation.id, 'donor_name': new_donation.donor.realname}), 200
     except Exception as e:
         db.session.rollback()
         return jsonify({'message': 'Failed to add donation', 'error': str(e)}), 500
@@ -39,7 +39,7 @@ def create_donation_auto():
         )
         db.session.add(new_donation)
         db.session.commit()
-        return jsonify({'message': 'Donation successfully added', 'donation_id': new_donation.id}), 200
+        return jsonify({'message': 'Donation successfully added', 'donor_name': new_donation.donor.realname, 'from_id': current_user_id, 'donation_id': new_donation.id}), 200
     except Exception as e:
         db.session.rollback()
         return jsonify({'message': 'Failed to add donation', 'error': str(e)}), 500
