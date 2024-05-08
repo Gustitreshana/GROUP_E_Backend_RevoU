@@ -5,6 +5,7 @@ from utils.db import db
 from flask_jwt_extended import jwt_required
 from sqlalchemy.exc import SQLAlchemyError
 from utils.rupiah_format import format_rupiah
+from flask_jwt_extended import get_jwt_identity
 
 donation_routes = Blueprint('donation_routes', __name__)
 
@@ -17,6 +18,24 @@ def create_donation():
         new_donation = Donation(
             nominal=data['nominal'],
             from_id=data['from_id']
+        )
+        db.session.add(new_donation)
+        db.session.commit()
+        return jsonify({'message': 'Donation successfully added', 'donation_id': new_donation.id}), 200
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'message': 'Failed to add donation', 'error': str(e)}), 500
+
+# Create a donation based on current user ID
+@donation_routes.route('/donations/current-user', methods=['POST'])
+@jwt_required()
+def create_donation_auto():
+    current_user_id = get_jwt_identity()
+    data = request.get_json()
+    try:
+        new_donation = Donation(
+            nominal=data['nominal'],
+            from_id=current_user_id
         )
         db.session.add(new_donation)
         db.session.commit()
