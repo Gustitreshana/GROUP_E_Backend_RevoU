@@ -1,9 +1,6 @@
-
 from app.utils.db import db
 from sqlalchemy import Integer, String, DateTime, func
-from sqlalchemy.orm import mapped_column, relationship
-from sqlalchemy import func
-
+from sqlalchemy.orm import relationship
 from flask_login import UserMixin
 import bcrypt
 
@@ -18,8 +15,11 @@ class User(db.Model, UserMixin):
     role = db.Column(db.String(100), nullable=True)
     updated_at = db.Column(DateTime(timezone=True), onupdate=func.now())
 
-    # Relasi dengan model Account
-    donatur = relationship("Donatur", back_populates="user", cascade="all, delete-orphan")
+    # Relasi dengan model Program
+    programs = db.relationship("Program", back_populates="user", cascade="all, delete-orphan")
+
+    def __repr__(self):
+        return f'<User {self.id}>'
 
     def serialize(self, full=True):
         if full:
@@ -39,9 +39,6 @@ class User(db.Model, UserMixin):
                 'name': self.name,
                 'role': self.role
             }
-
-    def __repr__(self):
-        return f'<User {self.id}>'
     
     def set_password(self, password):
         self.password = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')

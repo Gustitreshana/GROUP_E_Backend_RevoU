@@ -1,4 +1,5 @@
 
+from datetime import datetime
 from app.models.donatur import Donatur
 from app.utils.db import db
 
@@ -18,6 +19,7 @@ class Donatur_repo():
         donatur_obj.nama = donatur.nama
         donatur_obj.alamat = donatur.alamat
         donatur_obj.nomor_telepon = donatur.nomor_telepon
+        donatur_obj.updated_at = datetime.now()
         
         db.session.commit()
         return donatur_obj

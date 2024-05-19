@@ -2,12 +2,10 @@ from app.utils.db import db
 from sqlalchemy import Integer, String, DateTime, DECIMAL, ForeignKey
 from sqlalchemy.orm import relationship
 from sqlalchemy import func
-from app.models.donatur import Donatur
 
-donatur_donasi_association = db.Table('donatur_donasi_association',
-    db.Column('donatur_id', db.Integer, db.ForeignKey('donatur.donatur_id')),
-    db.Column('donasi_id', db.Integer, db.ForeignKey('donasi.donasi_id'))
-)
+# Import model Donatur and Program if needed
+# from app.models.donatur import Donatur
+# from app.models.program import Program
 
 class Donasi(db.Model):
     __tablename__ = "donasi"
@@ -16,11 +14,21 @@ class Donasi(db.Model):
     donasi_datetime = db.Column(DateTime(timezone=True), server_default=func.now())
     donatur_id = db.Column(db.Integer, ForeignKey("donatur.donatur_id", ondelete="CASCADE"))
     program_id = db.Column(db.Integer, ForeignKey("program.program_id", ondelete="CASCADE"))
-    pesan_doa = db.Column(db.String(255), nullable= False)
+    pesan_doa = db.Column(db.String(255), nullable=False)
     rupiah = db.Column(DECIMAL(precision=10, scale=2))
-    tipe_pembayaran = db.Column(db.String(255), nullable= False)
+    tipe_pembayaran = db.Column(db.String(255), nullable=False)
 
-    donatur = relationship("Donatur", secondary=donatur_donasi_association, back_populates="donasi")
+    # Relationship to Donatur and Program models
+    donatur = relationship("Donatur")
+    program = relationship("Program")
+
+    def __init__(self, pesan_doa, rupiah, tipe_pembayaran, donasi_datetime, donatur=None, program=None):
+        self.pesan_doa = pesan_doa
+        self.rupiah = rupiah
+        self.tipe_pembayaran = tipe_pembayaran
+        self.donasi_datetime = donasi_datetime
+        self.donatur = donatur
+        self.program = program
 
     def __repr__(self):
         return f'<Donasi {self.donasi_id}>'

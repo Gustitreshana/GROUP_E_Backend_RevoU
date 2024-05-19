@@ -1,4 +1,5 @@
 
+from datetime import datetime
 from app.repositories.donatur_repo import Donatur_repo
 from app.models.donatur import Donatur
 
@@ -21,6 +22,8 @@ class Donatur_service:
         donatur.nama = donatur_data_dto.nama
         donatur.alamat = donatur_data_dto.alamat
         donatur.nomor_telepon = donatur_data_dto.nomor_telepon
+        donatur.created_at = datetime.now()
+        donatur.updated_at = datetime.now()
 
         created_donatur = self.donatur_repo.create_donatur(donatur)
         return created_donatur.serialize()

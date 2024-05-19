@@ -1,10 +1,14 @@
 from flask import Blueprint, request, jsonify
 from flask_bcrypt import Bcrypt
-from app.models.user import User
+from app.models.user import User, db
 from app.utils.api_response import api_response
 from app.utils.db import db
 from flask_jwt_extended import create_access_token, get_jwt_identity, jwt_required
 from sqlalchemy.exc import SQLAlchemyError
+
+from werkzeug.security import generate_password_hash
+import bcrypt
+import re
 
 user_blueprint = Blueprint('user_endpoint', __name__)
 bcrypt = Bcrypt()
@@ -127,25 +131,42 @@ def update_profile():
 def create_user():
     data = request.get_json()
 
+    # Validate input data
+    if not data or not 'email' in data or not 'name' in data or not 'password' in data:
+        return jsonify({'message': 'Missing required fields'}), 400
+
+    email = data['email']
+    name = data['name']
+    password = data['password']
+
+    # Email format validation
+    email_regex = r'^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$'
+    if not re.match(email_regex, email):
+        return jsonify({'message': 'Invalid email format'}), 400
+
+    # Password complexity validation
+    if len(password) < 8:
+        return jsonify({'message': 'Password must be at least 8 characters long'}), 400
+
     try:
         # Checking if the user already exists
-        user_exists = User.query.filter_by(email=data['email']).first()
+        user_exists = User.query.filter_by(email=email).first()
         if user_exists:
             return jsonify({'message': 'User already registered'}), 400
 
         # Encrypting password with bcrypt
-        hashed_password = bcrypt.generate_password_hash(data['password']).decode('utf-8')
+        hashed_password = bcrypt.generate_password_hash(password).decode('utf-8')
 
         # Creating a new user
         new_user = User(
-            email=data['email'],
-            name=data['name'],
+            email=email,
+            name=name,
             password=hashed_password
         )
         db.session.add(new_user)
         db.session.commit()
 
-        return jsonify({'message': 'User successfully added'}), 200
+        return jsonify({'message': 'User successfully added'}), 201
     except Exception as e:
         db.session.rollback()
         return jsonify({'message': 'Failed to add user', 'error': str(e)}), 500

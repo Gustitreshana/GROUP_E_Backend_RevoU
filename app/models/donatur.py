@@ -3,10 +3,6 @@ from sqlalchemy import Integer, String, Text, DECIMAL, DateTime, ForeignKey
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
 
-donatur_donasi_association = db.Table('donatur_donasi_association',
-    db.Column('donatur_id', db.Integer, db.ForeignKey('donatur.donatur_id')),
-    db.Column('donasi_id', db.Integer, db.ForeignKey('donasi.donasi_id'))
-)
 
 class Donatur(db.Model):
     __tablename__ = 'donatur'
@@ -15,12 +11,11 @@ class Donatur(db.Model):
     nama = db.Column(db.String(200), nullable=False)
     alamat = db.Column(db.String(100), nullable=False)
     nomor_telepon = db.Column(db.String(255), nullable= False, unique=True)
-    user_id = db.Column(db.Integer, ForeignKey("users.id", ondelete="CASCADE"))
+    user_id = db.Column(db.Integer, ForeignKey("users.id"), nullable= False)
     created_at = db.Column(DateTime(timezone=True), server_default=func.now())
-    updated_at = db.Column(DateTime(timezone=True), server_default=func.now())
+    updated_at = db.Column(DateTime(timezone=True), onupdate=func.now())
     
-    user = relationship("User", back_populates="donatur")
-    donasi = relationship("Donasi", secondary=donatur_donasi_association, back_populates="donatur_donasi")
+    user = db.relationship('User', backref='donatur')
 
     def __repr__(self):
         return f'<Donatur {self.donatur_id}>'
@@ -32,9 +27,9 @@ class Donatur(db.Model):
                 'nama': self.nama,
                 'alamat': self.alamat,
                 'user_id': self.user_id,
-                'created_at': self.created_at.strftime("%Y-%m-%d %H:%M:%S"),
-                'updated_at': self.updated_at.strftime("%Y-%m-%d %H:%M:%S")
-            }
+                'created_at': self.created_at,
+                'updated_at': self.updated_at          
+                }
         else:
             return {
                 'id': self.donatur_id,

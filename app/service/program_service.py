@@ -1,3 +1,4 @@
+from datetime import datetime
 from app.repositories.program_repo import Program_repo
 from app.models.program import Program
 
@@ -6,7 +7,7 @@ class Program_service:
     def __init__(self):
         self.program_repo = Program_repo()
     
-    def get_program(self):
+    def get_programs(self):
         programs = self.program_repo.get_list_program()
         return [program.as_dict() for program in programs]
 
@@ -15,6 +16,8 @@ class Program_service:
 
         program.nama_program = program_data_dto.nama_program
         program.lokasi_program = program_data_dto.lokasi_program
+        program.created_at = datetime.now()
+        program.updated_at = datetime.now()
 
         created_program = self.program_repo.create_program(program)
         return created_program.as_dict()

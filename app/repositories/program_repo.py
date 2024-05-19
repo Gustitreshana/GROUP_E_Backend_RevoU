@@ -1,4 +1,5 @@
 
+from datetime import datetime
 from app.models.program import Program
 from app.utils.db import db
 
@@ -14,11 +15,9 @@ class Program_repo():
 
     def get_update_program(self, id, program):
         program_obj = Program.query.get(id)
-        program_obj.name = program.name
-        program_obj.email = program.email
-        program_obj.phone = program.phone
-        program_obj.role = program.role
-        program_obj.schedule = program.schedule
+        program_obj.nama_program = program.nama_program
+        program_obj.lokasi_program = program.lokasi_program
+        program_obj.updated_at = datetime.now()
         
         db.session.commit()
         return program_obj
@@ -30,6 +29,6 @@ class Program_repo():
         db.session.commit()
         return program_obj
     
-    def search_programs(self, name):
-        programs = Program.query.filter(Program.name.like(f"%{name}%")).all()
+    def search_programs(self, lokasi_program):
+        programs = Program.query.filter(Program.lokasi_program.like(f"%{lokasi_program}%")).all()
         return programs
