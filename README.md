@@ -1,13 +1,16 @@
-# Zero Hunger API 
+# Zero Hunger API (- **still under development by Iman**)
 
 The Zero Hunger API is a backend application built using Flask to help manage users, contacts, and donations in support of the Zero Hunger campaign.
 
 ## Features
 
-- **User Management**: Register, log in, update, and delete users.
-- **Contact Management**: Add, update, and delete contacts.
-- **Donation Management**: Add, view, update, and delete donations.
+- **User**: Register, log in, update, and delete users.
+- **Program Donasi**: Add, update, and delete contacts.
+- **Donatur**: Add, view, update, and delete donature.
+- **Donasi**: Add, view, update, and delete donasi.
 - **Authentication**: Uses JWT for user authentication.
+
+- **still under development by Iman**
 
 ## Technologies Used
 
@@ -28,10 +31,10 @@ Ensure you have Python and pip installed. You also need to have MySQL set up and
 git clone https://github.com/Gustitreshana/GROUP_E_Backend_RevoU.git
 ```
 
-- Install dependencies using pip
+- Install dependencies using "poetry add"
 
 ```bash
-pip install -r requirements.txt
+poetry add ...
 ```
 
 - Create a `.env` file at the root of the project and configure the environment variables (DATABASE_URI, JWT_SECRET_KEY, etc.).
@@ -39,7 +42,7 @@ pip install -r requirements.txt
 - Run the application.
 
 ```bash
-python main.py
+poetry run flask --app app run
 ```
 
 ## Usage
@@ -55,10 +58,7 @@ POST /register
 {
 "username": "newuser",
 "email": "newuser@example.com",
-"password": "strongpassword",
-"realname": "User Real Name",
-"address": "User Address",
-"occupation": "User Occupation"
+"password": "strongpassword"
 }
 ```
 
@@ -77,27 +77,52 @@ POST /login
 ```bash
 POST /contacts
 {
-"name": "Contact Name",
-"email": "contact@example.com",
-"phone": "1234567890",
-"user_id": 1
+# "name": "Contact Name",
+# "email": "contact@example.com",
+# "phone": "1234567890",
+# "user_id": 1
+- **still under development by Iman**
 }
 ```
 
-### Adding Donation
+### Adding Program, Donatur and Donasi
 
 ```bash
-POST /donations
+POST /programs
 {
-"nominal": 50000,
-"from_id": 1
+# "nominal": 50000,
+# "from_id": 1
+- **still under development by Iman**
 }
 ```
-
-### Viewing All Donations
+```bash
+POST /donatur
+{
+# "nominal": 50000,
+# "from_id": 1
+- **still under development by Iman**
+}
+```
+```bash
+POST /donasi
+{
+# "nominal": 50000,
+# "from_id": 1
+- **still under development by Iman**
+}
+```
+### Viewing All Program by Customer log in
 
 ```bash
-GET /donations
+# GET /all_programs
+- **still under development by Iman**
 ```
 
-This update includes the addition of donation management and minor fixes to syntax and provided information. Ensure to update the `.env` and `requirements.txt` files according to the latest needs of your project.
+### Viewing All Donatur and Donasi
+
+```bash
+# GET /donations
+- **still under development by Iman**
+```
+
+<!-- This update includes the addition of donation management and minor fixes to syntax and provided information. Ensure to update the `.env` and `requirements.txt` files according to the latest needs of your project. -->
