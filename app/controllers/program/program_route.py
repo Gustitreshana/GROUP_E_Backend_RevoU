@@ -1,15 +1,19 @@
 from flask import Blueprint, jsonify, request, json
-# from app.utils.database import db
+from app.models.user import User  # Import model User
 from app.models.program import Program
 from app.service.program_service import Program_service
 from app.utils.api_response import api_response
 from app.controllers.program.schema.create_program_request import Create_program_request
 from app.controllers.program.schema.update_program_request import Update_program_request
 from pydantic import ValidationError
+from flask_login import current_user  # Import fungsi current_user dari Flask-Login
+from flask_jwt_extended import create_access_token, get_jwt_identity, jwt_required
+
 
 program_blueprint = Blueprint('program_endpoint', __name__)
 
 @program_blueprint.route('/', methods=['POST'])
+@jwt_required() 
 def create_program():
     try:
         # Ambil data pelanggan dari permintaan POST
@@ -27,12 +31,19 @@ def create_program():
                         }                       
                 }
             )  
+        
+        # Mendapatkan identitas pengguna yang saat ini login dari token JWT
+        current_user_id = get_jwt_identity()
 
-        Update_program_request = Create_program_request(**data)
+        # Querying untuk mendapatkan data pengguna yang saat ini login
+        user = User.query.filter_by(id=current_user_id).first()
+
+        create_program_request = Create_program_request(**data)
 
         program_service = Program_service()
 
-        programs = program_service.create_program(Update_program_request)
+        # Panggil metode create_program dengan data program dan user_id
+        programs = program_service.create_program(create_program_request, user.id)
 
         return api_response(
             status_code=201,
@@ -48,7 +59,7 @@ def create_program():
             data={}
         )  
     
-@program_blueprint.route('/', methods=['GET'])
+@program_blueprint.route('/all', methods=['GET'])
 def get_programs():
     try:
         

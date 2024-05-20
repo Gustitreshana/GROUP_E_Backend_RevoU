@@ -8,12 +8,12 @@ class User(db.Model, UserMixin):
     __tablename__ = "users"
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    email = db.Column(db.String(191), nullable=False)
+    email = db.Column(db.String(191), nullable=False, unique= True)
     name = db.Column(db.String(191), nullable=False)
     password = db.Column(db.String(191), nullable=False)
     created_at = db.Column(DateTime(timezone=True), server_default=func.now())
     role = db.Column(db.String(100), nullable=True)
-    updated_at = db.Column(DateTime(timezone=True), onupdate=func.now())
+    updated_at = db.Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
 
     # Relasi dengan model Program
     programs = db.relationship("Program", back_populates="user", cascade="all, delete-orphan")

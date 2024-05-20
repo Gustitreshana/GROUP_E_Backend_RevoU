@@ -17,7 +17,6 @@ class Program_repo():
         program_obj = Program.query.get(id)
         program_obj.nama_program = program.nama_program
         program_obj.lokasi_program = program.lokasi_program
-        program_obj.updated_at = datetime.now()
         
         db.session.commit()
         return program_obj
