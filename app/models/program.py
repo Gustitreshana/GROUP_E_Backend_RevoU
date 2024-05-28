@@ -40,7 +40,7 @@ class Program(db.Model):
             }
         else:
             return {
-                'program_id': self.id,
+                'program_id': self.program_id,
                 'user_id': self.user_id,
                 'nama_program': self.nama_program,
                 'lokasi_program': self.lokasi_program

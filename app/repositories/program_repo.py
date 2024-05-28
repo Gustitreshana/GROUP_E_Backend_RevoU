@@ -4,10 +4,10 @@ from app.models.program import Program
 from app.utils.db import db
 
 class Program_repo():
-    def get_list_program(self):
+    def get_all_programs(self):
         programs = Program.query.all()
         return programs
-    
+
     def create_program(self, program):
         db.session.add(program)
         db.session.commit()

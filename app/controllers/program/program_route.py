@@ -1,4 +1,5 @@
 from flask import Blueprint, jsonify, request, json
+from app.decorators.role_checker import role_required
 from app.models.user import User  # Import model User
 from app.models.program import Program
 from app.service.program_service import Program_service
@@ -58,28 +59,100 @@ def create_program():
             message=str(e),
             data={}
         )  
-    
-@program_blueprint.route('/all', methods=['GET'])
-def get_programs():
+
+
+@program_blueprint.route('/programdonasiku', methods=["GET"])
+@jwt_required()  # Membutuhkan token JWT untuk akses
+def only_userlogin_program():
     try:
+        # Mendapatkan identitas pengguna yang saat ini login dari token JWT
+        current_user_id = get_jwt_identity()
+
+        # Querying untuk mendapatkan data pengguna yang saat ini login
+        user = User.query.filter_by(id=current_user_id).first()
+
+        # Memastikan pengguna ditemukan
+        if not user:
+            return api_response(
+                status_code=404,
+                message="User not found",
+                data={}
+            )
         
-        program_service = Program_service()
-        programs = program_service.get_programs()
+        # Mendapatkan data program yang terkait dengan user
+        programs = user.programs  # Asumsi ada relasi many-to-many
+
+        programs_data = [{
+            'program_id': program.program_id,
+            'user_id': program.user_id,
+            'nama_program': program.nama_program,
+            'lokasi_program': program.lokasi_program,
+            'created_at': program.created_at,
+            'updated_at': program.updated_at
+        } for program in programs]
+        
         # return programs
         return api_response(
             status_code = 200,
-            message ="Daftar semua programs sukses diakses",
-            data = programs
-        )
+            message ="Daftar semua program donasi anda sukses diakses",
+            data = programs_data
+        )       
     
     except Exception as e:
         return api_response(
             status_code=500,
             message=str(e),
             data={}
-        )   
+        )  
+
+
+# --->>>--ADMIN-ACCESS--->>>--ADMIN--ACCESS--->>>>
+@program_blueprint.route('/admin/all', methods=['GET'])
+@jwt_required()
+@role_required('admin')
+def get_programs():
+    try:
+        
+        # Mendapatkan identitas pengguna yang saat ini login dari token JWT
+        current_user_id = get_jwt_identity()
+
+        # # Querying untuk mendapatkan data pengguna yang saat ini login
+        # user = User.query.filter_by(id=current_user_id).first()
+
+
+        program_service = Program_service()
+
+        programs = program_service.get_programs(current_user_id)
+        
+        # return programs
+        return api_response(
+            status_code = 200,
+            message ="Daftar semua program donasi sukses diakses",
+            data = programs
+        )
+        
+    except ValueError as ve:
+        return api_response(
+            status_code=404,
+            message=str(ve),
+            data={}
+        )
     
-@program_blueprint.route('//<int:program_id>', methods=['GET'])
+    except PermissionError as pe:
+        return api_response(
+            status_code=403,
+            message=str(pe),
+            data={}
+        )
+
+    except Exception as e:
+        return api_response(
+            status_code=500,
+            message=str(e),
+            data={}
+        )
+        
+@program_blueprint.route('/admin/<int:program_id>', methods=['GET'])
 def get_program(program_id):
     try:
         program = Program.query.get(program_id)
@@ -87,7 +160,7 @@ def get_program(program_id):
             return api_response(
                 status_code=200,
                 message="Daftar data dari id karyawan berhasil ditampilkan",
-                data=[program.as_dict()]
+                data=[program.serialize()]
             )  
         else:
             return api_response(
@@ -102,7 +175,7 @@ def get_program(program_id):
             data={}
         ) 
 
-@program_blueprint.route('//<int:program_id>', methods=['PUT'])
+@program_blueprint.route('/admin/<int:program_id>', methods=['PUT'])
 def update_program(program_id):
     try:
 
@@ -132,7 +205,7 @@ def update_program(program_id):
             data={}
         )   
 
-@program_blueprint.route('/<int:program_id>', methods=['DELETE'])
+@program_blueprint.route('/admin/<int:program_id>', methods=['DELETE'])
 def delete_program(program_id):
     try:
         employe_service = Program_service()
@@ -145,7 +218,7 @@ def delete_program(program_id):
         )
         return api_response(
             status_code=200,
-            message="Data karyawan berhasil dihapus (sudah resign)",
+            message="Data program donasi berhasil dihapus",
             data=program
         )    
         
@@ -156,7 +229,7 @@ def delete_program(program_id):
             data={}
         ) 
     
-@program_blueprint.route('/search', methods=['GET'])
+@program_blueprint.route('/admin/search', methods=['GET'])
 def search_programs():
     try:
         request_data = request.args
@@ -167,13 +240,13 @@ def search_programs():
         # return [animal.as_dict() for animal in animals], 200
             return api_response(
                 status_code=200,
-                message="Daftar data karyawan yang dicari sukses diakses",
+                message="Daftar data program donasi yang dicari sukses diakses",
                 data=programs
             )  
         else:
             return api_response(
                 status_code=400,
-                message="Data karyawan yang dicari tidak ditemukan",
+                message="Data program donasi yang dicari tidak ditemukan",
                 data={}
             )   
     except Exception as e:
@@ -182,3 +255,31 @@ def search_programs():
             message=str(e),
             data={}
         )       
+
+# -------------------------trial admin access--->>>>>>
+
+# Admin Get All Programs
+@program_blueprint.route('/admin/list-programs', methods=["GET"])
+@jwt_required()
+@role_required('admin')
+def all_list_programs():
+    try:
+        # Mengambil semua program dari database
+        programs = Program.query.all()
+
+        # Mengonversi data program ke format JSON
+        programs_data = [program.serialize() for program in programs]
+
+        # Mengembalikan data program sebagai JSON
+        return api_response(
+            status_code=200,
+            message='User-Admin successfully accessed list of all programs',
+            data={'programs': programs_data}
+        )
+
+    except Exception as e:
+        return api_response(
+            status_code=500,
+            message='Failed to fetch program data',
+            data={'error': str(e)}
+        )

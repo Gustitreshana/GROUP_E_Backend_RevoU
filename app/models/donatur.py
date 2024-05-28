@@ -23,7 +23,7 @@ class Donatur(db.Model):
     def serialize(self, full=True):
         if full:
             return {
-                'id': self.donatur_id,
+                'donatur_id': self.donatur_id,
                 'nama': self.nama,
                 'alamat': self.alamat,
                 'user_id': self.user_id,
